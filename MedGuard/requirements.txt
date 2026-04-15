@@ -1,0 +1,52 @@
+# Core dependencies
+torch>=2.0.0
+transformers>=4.35.0
+accelerate>=0.24.0
+bitsandbytes>=0.41.0
+
+# Quantization
+autoawq>=0.1.7
+auto-gptq>=0.4.2
+
+# Inference optimization
+vllm>=0.2.0
+
+# NLP utilities
+tokenizers>=0.15.0
+sentencepiece>=0.1.99
+
+# Privacy NER
+spacy>=3.7.0
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
+
+# API & serving
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+python-multipart>=0.0.6
+
+# Demo UI
+gradio>=4.0.0
+
+# LangChain integration
+langchain>=0.1.0
+langchain-community>=0.0.10
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-asyncio>=0.21.0
+
+# Utilities
+numpy>=1.24.0
+scipy>=1.11.0
+tqdm>=4.66.0
+loguru>=0.7.0
+
+# Optional: For model training
+peft>=0.6.0
+trl>=0.7.0
+datasets>=2.14.0
+
+# Optional: Monitoring
+prometheus-client>=0.19.0
