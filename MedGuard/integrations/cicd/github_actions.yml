@@ -1,0 +1,81 @@
+name: Medical Safety Check
+
+on:
+  pull_request:
+    paths:
+      - 'src/**/*.py'
+      - 'prompts/**/*.md'
+      - 'data/**/*.json'
+
+jobs:
+  safety-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install medguard pytest pytest-cov
+        pip install -r requirements.txt
+    
+    - name: Run unit tests
+      run: |
+        pytest tests/ -v --cov=src --cov-report=xml
+    
+    - name: Run medical safety test suite
+      run: |
+        medguard-test \
+          --test-set tests/medical_safety_cases.json \
+          --threshold 0.7 \
+          --report-format junit \
+          --output safety_report.xml
+    
+    - name: Upload coverage report
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        flags: unittests
+    
+    - name: Upload safety report
+      uses: actions/upload-artifact@v3
+      with:
+        name: safety-report
+        path: safety_report.xml
+    
+    - name: Fail on critical safety issues
+      run: |
+        python scripts/check_safety_results.py safety_report.xml
+        
+  privacy-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install medguard
+    
+    - name: Run PHI detection test
+      run: |
+        python scripts/test_phi_detection.py \
+          --test-set tests/privacy_test_cases.json \
+          --min-recall 0.90 \
+          --report privacy_report.json
+    
+    - name: Upload privacy report
+      uses: actions/upload-artifact@v3
+      with:
+        name: privacy-report
+        path: privacy_report.json
